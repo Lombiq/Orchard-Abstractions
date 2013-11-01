@@ -10,3 +10,13 @@ Features:
 		Name: Abstractions
         Description: Provides useful abstractions for Orchard services.
 		Category: Developer
+	Lombiq.Abstractions.QuickParts:
+		Name: Abstractions - Quick Parts
+        Description: Provides an abstraction for content part development, enabling simplified development of basic content parts.
+		Category: Developer
+		Dependencies: Lombiq.Abstractions
+	Lombiq.Abstractions.QuickWidgets:
+		Name: Abstractions - Quick Widgets
+        Description: Provides an abstraction for widget development, enabling simplified development of basic widgets.
+		Category: Developer
+		Dependencies: Lombiq.Abstractions.QuickParts
