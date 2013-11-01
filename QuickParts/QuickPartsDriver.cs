@@ -6,10 +6,11 @@ using System.Web;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.DisplayManagement;
+using Orchard.DisplayManagement.Descriptors;
 
 namespace Lombiq.Abstractions.QuickParts
 {
-    public class QuickPartsDriver : ContentPartDriver<ContentPart>
+    public class QuickPartsDriver : ContentPartDriver<ContentPart>, IShapeTableProvider
     {
         private readonly IEnumerable<IQuickPart> _parts;
         private readonly IEnumerable<IQuickPartLogic> _logics;
@@ -27,6 +28,17 @@ namespace Lombiq.Abstractions.QuickParts
         }
 
 
+        public void Discover(ShapeTableBuilder builder)
+        {
+            foreach (var part in _parts)
+            {
+                builder
+                    .Describe(ShapeNameFromPart(part))
+                    .Placement(ctx => new PlacementInfo { Location = "Content:5" });
+            }
+        }
+
+
         protected override DriverResult Display(ContentPart part, string displayType, dynamic shapeHelper)
         {
             return Combined(
@@ -34,29 +46,30 @@ namespace Lombiq.Abstractions.QuickParts
                 {
                     var partType = p.GetType();
 
-                    var parameters = new Dictionary<string, object>();
-
-                    parameters["ContentPart"] = p;
-
-                    var logicInterface = typeof(IQuickPartLogic<>).MakeGenericType(partType);
-                    foreach (var logic in _logics.Where(l => logicInterface.IsAssignableFrom(l.GetType())))
-                    {
-                        var context = logic.GetType().InvokeMember("ComputeContext", BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance, null, logic, new[] { p }) as IEnumerable<KeyValuePair<string, object>>;
-                        if (context != null)
-                        {
-                            foreach (var item in context)
-                            {
-                                parameters[item.Key] = item.Value;
-                            }
-                        }
-                    }
-
-                    var partName = partType.Name;
-                    if (partName.EndsWith("Part")) partName = partName.Substring(0, partName.Length - 4);
-                    var shapeName = "Parts_" + partName;
+                    var shapeName = ShapeNameFromPart(p);
 
                     return ContentShape(shapeName,
-                        () => _shapeFactory.Create(shapeName, new ShapeParams(parameters)));
+                        () =>
+                        {
+                            var parameters = new Dictionary<string, object>();
+
+                            parameters["ContentPart"] = p;
+
+                            var logicInterface = typeof(IQuickPartLogic<>).MakeGenericType(p.GetType());
+                            foreach (var logic in _logics.Where(l => logicInterface.IsAssignableFrom(l.GetType())))
+                            {
+                                var context = logic.GetType().InvokeMember("ComputeContext", BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance, null, logic, new[] { p }) as IEnumerable<KeyValuePair<string, object>>;
+                                if (context != null)
+                                {
+                                    foreach (var item in context)
+                                    {
+                                        parameters[item.Key] = item.Value;
+                                    }
+                                }
+                            }
+
+                            return _shapeFactory.Create(shapeName, new ShapeParams(parameters));
+                        });
                 }).ToArray()
             );
         }
@@ -77,6 +90,14 @@ namespace Lombiq.Abstractions.QuickParts
             return Editor(part, shapeHelper);
         }
 
+
+        private static string ShapeNameFromPart(IQuickPart part)
+        {
+            var partName = part.GetType().Name;
+            if (partName.EndsWith("Part")) partName = partName.Substring(0, partName.Length - 4);
+
+            return "Parts_" + partName;
+        }
 
         private class ShapeParams : INamedEnumerable<object>
         {
