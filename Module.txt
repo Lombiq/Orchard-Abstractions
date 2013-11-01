@@ -1,0 +1,12 @@
+﻿Name: Abstractions
+AntiForgery: enabled
+Author: Lombiq
+Website: https://orchardabstractions.codeplex.com/
+Version: 1.0
+OrchardVersion: 1.7
+Description: Provides useful abstractions for Orchard services.
+Features:
+    Lombiq.Abstractions:
+		Name: Abstractions
+        Description: Provides useful abstractions for Orchard services.
+		Category: Developer
