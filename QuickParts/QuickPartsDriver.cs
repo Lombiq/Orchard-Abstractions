@@ -5,12 +5,15 @@ using System.Reflection;
 using System.Web;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.MetaData;
 using Orchard.DisplayManagement;
 using Orchard.DisplayManagement.Descriptors;
+using Orchard.Environment.Extensions;
 
 namespace Lombiq.Abstractions.QuickParts
 {
-    public class QuickPartsDriver : ContentPartDriver<ContentPart>, IShapeTableProvider
+    [OrchardFeature("Lombiq.Abstractions.QuickParts")]
+    public class QuickPartsDriver : ContentPartDriver<ContentPart>, IShapeTableProvider, IContentPartDriver
     {
         private readonly IEnumerable<IQuickPart> _parts;
         private readonly IEnumerable<IQuickPartLogic> _logics;
@@ -36,6 +39,15 @@ namespace Lombiq.Abstractions.QuickParts
                     .Describe(ShapeNameFromPart(part))
                     .Placement(ctx => new PlacementInfo { Location = "Content:5" });
             }
+        }
+
+        IEnumerable<ContentPartInfo> IContentPartDriver.GetPartInfo()
+        {
+            return _parts.Select(part => new ContentPartInfo
+            {
+                PartName = part.GetType().Name,
+                Factory = typePartDefinition => part as ContentPart
+            });
         }
 
 

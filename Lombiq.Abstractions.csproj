@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="QuickParts\IQuickPart.cs" />
     <Compile Include="QuickParts\IQuickPartLogic.cs" />
+    <Compile Include="QuickParts\QuickPart.cs" />
     <Compile Include="QuickParts\QuickPartsDriver.cs" />
     <Compile Include="QuickWidgets\IQuickWidget.cs" />
   </ItemGroup>
