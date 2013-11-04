@@ -55,7 +55,7 @@ namespace Lombiq.Abstractions.QuickParts
         {
             var parameters = new Dictionary<string, object>();
 
-            var logicInterface = typeof(IQuickPartLogic<>).MakeGenericType(part.GetType());
+            var logicInterface = typeof(IQuickPartLogic<>).MakeGenericType(part.GetType().BaseType);
             foreach (var logic in _logics.Where(l => logicInterface.IsAssignableFrom(l.GetType())))
             {
                 var context = logic.GetType().InvokeMember("ComputeDisplayParameters", BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance, null, logic, new[] { part }) as IEnumerable<KeyValuePair<string, object>>;
@@ -72,6 +72,7 @@ namespace Lombiq.Abstractions.QuickParts
         }
 
 
+        [Serializable]
         public class StorageInterceptor : IInterceptor
         {
             public void Intercept(IInvocation invocation)

@@ -30,11 +30,17 @@ namespace Lombiq.Abstractions.QuickParts
 
         public void Discover(ShapeTableBuilder builder)
         {
+            var placement = new PlacementInfo { Location = "Content:5" };
+
             foreach (var partName in _quickPartsManager.GetPartNames())
             {
                 builder
-                    .Describe(ShapeNameFromPartName(partName))
-                    .Placement(ctx => new PlacementInfo { Location = "Content:5" });
+                    .Describe(ShapeNameForPartName(partName))
+                    .Placement(ctx => ctx.DisplayType == "Detail", placement);
+
+                builder
+                    .Describe(ShapeNameForPartName(partName) + "_Edit")
+                    .Placement(ctx => placement);
             }
         }
 
@@ -56,18 +62,16 @@ namespace Lombiq.Abstractions.QuickParts
         protected override DriverResult Display(ContentPart part, string displayType, dynamic shapeHelper)
         {
             return Combined(
-                part.ContentItem.Parts.Where(p => typeof(QuickPart).IsAssignableFrom(p.GetType())).Select(p =>
+                GetQickParts(part).Select(p =>
                 {
-                    var shapeName = ShapeNameFromPart(p);
-
+                    var shapeName = ShapeNameForPart(p);
+                    
                     return ContentShape(shapeName,
                         () =>
                         {
-                            var quickPart = p;
+                            var parameters = new Dictionary<string, object>(_quickPartsManager.ComputeDisplayParameters((QuickPart)p));
 
-                            var parameters = new Dictionary<string, object>(_quickPartsManager.ComputeDisplayParameters((QuickPart)quickPart));
-
-                            parameters["ContentPart"] = quickPart;
+                            parameters["ContentPart"] = p;
 
                             return _shapeFactory.Create(shapeName, new ShapeParams(parameters));
                         });
@@ -77,31 +81,46 @@ namespace Lombiq.Abstractions.QuickParts
 
         protected override DriverResult Editor(ContentPart part, dynamic shapeHelper)
         {
-            // TODO: Changing prefix before every ContentShape call
-            return ContentShape("Parts_Content_Edit",
-                () => shapeHelper.EditorTemplate(
-                    TemplateName: "Parts.Content",
-                    Model: part,
-                    Prefix: Prefix));
+            return Combined(
+                GetQickParts(part).Select(p =>
+                {
+                    var shapeName = ShapeNameForPart(p);
+
+                    return ContentShape(shapeName + "_Edit",
+                        () => shapeHelper.EditorTemplate(
+                                    TemplateName: shapeName.Replace('_', '.'),
+                                    Model: p,
+                                    Prefix: p.TypePartDefinition.PartDefinition.Name));
+                }).ToArray()
+            );
         }
 
         protected override DriverResult Editor(ContentPart part, IUpdateModel updater, dynamic shapeHelper)
         {
-            updater.TryUpdateModel(part, Prefix, null, null);
+            foreach (var p in GetQickParts(part))
+            {
+                updater.TryUpdateModel((dynamic)p, p.TypePartDefinition.PartDefinition.Name, null, null);
+            }
+
             return Editor(part, shapeHelper);
         }
 
 
-        private static string ShapeNameFromPart(ContentPart part)
+        private static string ShapeNameForPart(ContentPart part)
         {
-            return ShapeNameFromPartName(part.TypePartDefinition.PartDefinition.Name);
+            return ShapeNameForPartName(part.TypePartDefinition.PartDefinition.Name);
         }
 
-        private static string ShapeNameFromPartName(string partName)
+        private static string ShapeNameForPartName(string partName)
         {
             if (partName.EndsWith("Part")) partName = partName.Substring(0, partName.Length - 4);
 
             return "Parts_" + partName;
+        }
+
+        private static IEnumerable<ContentPart> GetQickParts(ContentPart part)
+        {
+            return part.ContentItem.Parts.Where(p => typeof(QuickPart).IsAssignableFrom(p.GetType()));
         }
 
 
