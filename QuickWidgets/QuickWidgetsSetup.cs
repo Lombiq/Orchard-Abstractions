@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Orchard.ContentManagement.MetaData;
-using Orchard.Core.Contents.Settings;
-using Orchard.Environment;
-using Orchard.Core.Contents.Extensions;
-using Orchard.Environment.Extensions;
+﻿using System.Linq;
 using Lombiq.Abstractions.QuickParts;
+using Orchard.ContentManagement.MetaData;
+using Orchard.Environment;
+using Orchard.Environment.Extensions;
 
 namespace Lombiq.Abstractions.QuickWidgets
 {

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using Orchard.ContentManagement.FieldStorage.InfosetStorage;
-using Orchard.Utility;
-using System.Linq;
 
 namespace Orchard.ContentManagement
 {
