@@ -6,7 +6,7 @@ using Orchard;
 
 namespace Lombiq.Abstractions.QuickParts
 {
-    public interface IQuickPart : IDependency
+    public interface IQuickPart : ISingletonDependency
     {
     }
 }

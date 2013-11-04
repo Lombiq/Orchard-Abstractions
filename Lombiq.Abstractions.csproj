@@ -45,6 +45,14 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\lib\Castle Windsor 2.0\bin\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.DynamicProxy2, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\lib\Castle Windsor 2.0\bin\Castle.DynamicProxy2.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -87,11 +95,15 @@
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="QuickParts\QuickPartsSetup.cs" />
+    <Compile Include="QuickParts\TheShiftHelpers.cs" />
     <Compile Include="QuickParts\IQuickPart.cs" />
     <Compile Include="QuickParts\IQuickPartLogic.cs" />
+    <Compile Include="QuickParts\IQuickPartsManager.cs" />
     <Compile Include="QuickParts\QuickPart.cs" />
     <Compile Include="QuickParts\QuickPartsDriver.cs" />
     <Compile Include="QuickWidgets\IQuickWidget.cs" />
+    <Compile Include="QuickParts\QuickPartsManager.cs" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -14,6 +14,6 @@ namespace Lombiq.Abstractions.QuickParts
         where T : IQuickPart
     {
         // TODO: How will generic methods be called? What about using the event bus (no real type information available then!)?
-        IEnumerable<KeyValuePair<string, object>> ComputeContext(T part);
+        IEnumerable<KeyValuePair<string, object>> ComputeDisplayParameters(T part);
     }
 }

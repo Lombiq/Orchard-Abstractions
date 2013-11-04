@@ -15,38 +15,40 @@ namespace Lombiq.Abstractions.QuickParts
     [OrchardFeature("Lombiq.Abstractions.QuickParts")]
     public class QuickPartsDriver : ContentPartDriver<ContentPart>, IShapeTableProvider, IContentPartDriver
     {
-        private readonly IEnumerable<IQuickPart> _parts;
-        private readonly IEnumerable<IQuickPartLogic> _logics;
+        private readonly IQuickPartsManager _quickPartsManager;
         private readonly IShapeFactory _shapeFactory;
 
 
         public QuickPartsDriver(
-            IEnumerable<IQuickPart> parts,
-            IEnumerable<IQuickPartLogic> logics,
+            IQuickPartsManager quickPartsManager,
             IShapeFactory shapeFactory)
         {
-            _parts = parts;
-            _logics = logics;
+            _quickPartsManager = quickPartsManager;
             _shapeFactory = shapeFactory;
         }
 
 
         public void Discover(ShapeTableBuilder builder)
         {
-            foreach (var part in _parts)
+            foreach (var partName in _quickPartsManager.GetPartNames())
             {
                 builder
-                    .Describe(ShapeNameFromPart(part))
+                    .Describe(ShapeNameFromPartName(partName))
                     .Placement(ctx => new PlacementInfo { Location = "Content:5" });
             }
         }
 
         IEnumerable<ContentPartInfo> IContentPartDriver.GetPartInfo()
         {
-            return _parts.Select(part => new ContentPartInfo
+            return _quickPartsManager.GetPartNames().Select(partName => new ContentPartInfo
             {
-                PartName = part.GetType().Name,
-                Factory = typePartDefinition => part as ContentPart
+                PartName = partName,
+                Factory = typePartDefinition =>
+                    {
+                        var part = _quickPartsManager.Factory(typePartDefinition.PartDefinition.Name);
+                        part.TypePartDefinition = typePartDefinition;
+                        return part;
+                    }
             });
         }
 
@@ -54,31 +56,18 @@ namespace Lombiq.Abstractions.QuickParts
         protected override DriverResult Display(ContentPart part, string displayType, dynamic shapeHelper)
         {
             return Combined(
-                _parts.Select(p =>
+                part.ContentItem.Parts.Where(p => typeof(QuickPart).IsAssignableFrom(p.GetType())).Select(p =>
                 {
-                    var partType = p.GetType();
-
                     var shapeName = ShapeNameFromPart(p);
 
                     return ContentShape(shapeName,
                         () =>
                         {
-                            var parameters = new Dictionary<string, object>();
+                            var quickPart = p;
 
-                            parameters["ContentPart"] = p;
+                            var parameters = new Dictionary<string, object>(_quickPartsManager.ComputeDisplayParameters((QuickPart)quickPart));
 
-                            var logicInterface = typeof(IQuickPartLogic<>).MakeGenericType(p.GetType());
-                            foreach (var logic in _logics.Where(l => logicInterface.IsAssignableFrom(l.GetType())))
-                            {
-                                var context = logic.GetType().InvokeMember("ComputeContext", BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance, null, logic, new[] { p }) as IEnumerable<KeyValuePair<string, object>>;
-                                if (context != null)
-                                {
-                                    foreach (var item in context)
-                                    {
-                                        parameters[item.Key] = item.Value;
-                                    }
-                                }
-                            }
+                            parameters["ContentPart"] = quickPart;
 
                             return _shapeFactory.Create(shapeName, new ShapeParams(parameters));
                         });
@@ -103,13 +92,18 @@ namespace Lombiq.Abstractions.QuickParts
         }
 
 
-        private static string ShapeNameFromPart(IQuickPart part)
+        private static string ShapeNameFromPart(ContentPart part)
         {
-            var partName = part.GetType().Name;
+            return ShapeNameFromPartName(part.TypePartDefinition.PartDefinition.Name);
+        }
+
+        private static string ShapeNameFromPartName(string partName)
+        {
             if (partName.EndsWith("Part")) partName = partName.Substring(0, partName.Length - 4);
 
             return "Parts_" + partName;
         }
+
 
         private class ShapeParams : INamedEnumerable<object>
         {
