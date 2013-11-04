@@ -104,6 +104,8 @@
     <Compile Include="QuickParts\QuickPartsDriver.cs" />
     <Compile Include="QuickWidgets\IQuickWidget.cs" />
     <Compile Include="QuickParts\QuickPartsManager.cs" />
+    <Compile Include="QuickWidgets\QuickWidgetPart.cs" />
+    <Compile Include="QuickWidgets\QuickWidgetsSetup.cs" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

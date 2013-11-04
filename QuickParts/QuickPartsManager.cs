@@ -37,9 +37,9 @@ namespace Lombiq.Abstractions.QuickParts
         }
 
 
-        public IEnumerable<string> GetPartNames()
+        public IEnumerable<Type> GetPartTypes()
         {
-            return _parts.Select(part => part.GetType().Name);
+            return _parts.Select(part => part.GetType());
         }
 
         public QuickPart Factory(string quickPartName)
