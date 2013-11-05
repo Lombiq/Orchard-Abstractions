@@ -89,11 +89,7 @@
       <Name>Orchard.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="QuickParts\QuickPartsSetup.cs" />
     <Compile Include="QuickParts\TheShiftHelpers.cs" />
