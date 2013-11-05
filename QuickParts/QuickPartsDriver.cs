@@ -85,7 +85,7 @@ namespace Lombiq.Abstractions.QuickParts
 
                     return ContentShape(shapeName + "_Edit",
                         () => shapeHelper.EditorTemplate(
-                                    TemplateName: shapeName.Replace('_', '.'),
+                                    TemplateName: shapeName.Replace("Parts_", "Parts/").Replace('_', '.'),
                                     Model: p,
                                     Prefix: p.TypePartDefinition.PartDefinition.Name));
                 }).ToArray()
