@@ -66,11 +66,10 @@ namespace Lombiq.Abstractions.QuickParts
                     return ContentShape(shapeName,
                         () =>
                         {
-                            var parameters = new Dictionary<string, object>(_quickPartsManager.ComputeDisplayParameters((QuickPart)p));
-
-                            parameters["ContentPart"] = p;
-
-                            return _shapeFactory.Create(shapeName, new ShapeParams(parameters));
+                            dynamic shape = _shapeFactory.Create(shapeName);
+                            _quickPartsManager.ComputeDisplayShapeParameters((QuickPart)p, shape);
+                            shape.ContentPart = p;
+                            return shape;
                         });
                 }).ToArray()
             );

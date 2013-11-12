@@ -46,24 +46,13 @@ namespace Lombiq.Abstractions.QuickParts
             return (QuickPart)_proxyGenerator.CreateClassProxy(part.GetType(), _storageInterceptor);
         }
 
-        public IDictionary<string, object> ComputeDisplayParameters(QuickPart part)
+        public void ComputeDisplayShapeParameters(QuickPart part, dynamic shape)
         {
-            var parameters = new Dictionary<string, object>();
-
             var logicInterface = typeof(IQuickPartLogic<>).MakeGenericType(part.GetType().BaseType);
             foreach (var logic in _logics.Where(l => logicInterface.IsAssignableFrom(l.GetType())))
             {
-                var context = logic.GetType().InvokeMember("ComputeDisplayParameters", BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance, null, logic, new[] { part }) as IEnumerable<KeyValuePair<string, object>>;
-                if (context != null)
-                {
-                    foreach (var item in context)
-                    {
-                        parameters[item.Key] = item.Value;
-                    }
-                }
+                logic.GetType().InvokeMember("ComputeDisplayParameters", BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance, null, logic, new[] { part, shape });
             }
-
-            return parameters;
         }
 
 

@@ -9,7 +9,7 @@ namespace Lombiq.Abstractions.QuickParts
     {
         IEnumerable<Type> GetPartTypes();
         QuickPart Factory(string quickPartName);
-        IDictionary<string, object> ComputeDisplayParameters(QuickPart part);
+        void ComputeDisplayShapeParameters(QuickPart part, dynamic shape);
     }
 
 

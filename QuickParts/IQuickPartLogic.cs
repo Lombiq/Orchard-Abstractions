@@ -19,10 +19,10 @@ namespace Lombiq.Abstractions.QuickParts
     {
         /// <summary>
         /// When the part is displayed, this method is called on every corresponding logic to compute additional parameters for
-        /// be used in the display template.
+        /// be used in the display shape template.
         /// </summary>
         /// <param name="part">The part object</param>
-        /// <returns>The collection of parameters that will be reachable from the template</returns>
-        IEnumerable<KeyValuePair<string, object>> ComputeDisplayParameters(TPart part);
+        /// <param name="shape">The display shape to add parameters to</param>
+        void ComputeDisplayParameters(TPart part, dynamic shape);
     }
 }
