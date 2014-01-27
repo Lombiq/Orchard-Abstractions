@@ -3,7 +3,7 @@ AntiForgery: enabled
 Author: Lombiq
 Website: https://orchardabstractions.codeplex.com/
 Version: 1.0
-OrchardVersion: 1.7
+OrchardVersion: 1.8
 Description: Provides useful abstractions for Orchard services.
 Features:
     Lombiq.Abstractions:
