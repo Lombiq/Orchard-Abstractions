@@ -87,7 +87,9 @@
       <Name>Orchard.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Licence.md" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="QuickParts\QuickPartsSetup.cs" />
     <Compile Include="QuickParts\IQuickPart.cs" />
