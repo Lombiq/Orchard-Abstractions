@@ -1,7 +1,7 @@
 ﻿Name: Abstractions
 AntiForgery: enabled
 Author: Lombiq
-Website: https://orchardabstractions.codeplex.com/
+Website: https://github.com/Lombiq/Orchard-Abstractions
 Version: 1.0
 OrchardVersion: 1.8
 Description: Provides useful abstractions for Orchard services.
