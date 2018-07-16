@@ -59,7 +59,7 @@ namespace Lombiq.Abstractions.QuickParts
         protected override DriverResult Display(ContentPart part, string displayType, dynamic shapeHelper)
         {
             return Combined(
-                GetQickParts(part).Select(p =>
+                GetQuickParts(part).Select(p =>
                 {
                     var shapeName = ShapeNameForPart(p);
                     
@@ -78,7 +78,7 @@ namespace Lombiq.Abstractions.QuickParts
         protected override DriverResult Editor(ContentPart part, dynamic shapeHelper)
         {
             return Combined(
-                GetQickParts(part).Select(p =>
+                GetQuickParts(part).Select(p =>
                 {
                     var shapeName = ShapeNameForPart(p);
 
@@ -93,7 +93,7 @@ namespace Lombiq.Abstractions.QuickParts
 
         protected override DriverResult Editor(ContentPart part, IUpdateModel updater, dynamic shapeHelper)
         {
-            foreach (var p in GetQickParts(part))
+            foreach (var p in GetQuickParts(part))
             {
                 updater.TryUpdateModel((dynamic)p, p.TypePartDefinition.PartDefinition.Name, null, null);
             }
@@ -114,7 +114,7 @@ namespace Lombiq.Abstractions.QuickParts
             return "Parts_" + partName;
         }
 
-        private static IEnumerable<ContentPart> GetQickParts(ContentPart part)
+        private static IEnumerable<ContentPart> GetQuickParts(ContentPart part)
         {
             return part.ContentItem.Parts.Where(p => typeof(QuickPart).IsAssignableFrom(p.GetType()));
         }
